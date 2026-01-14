@@ -1,0 +1,85 @@
+﻿<!-- BEGIN SAMPLE PORTLET CONFIGURATION MODAL FORM-->
+<div class="modal fade" id="portlet-config" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+                <h4 class="modal-title">
+                    Modal title
+                </h4>
+            </div>
+            <div class="modal-body">
+                Widget settings form goes here
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn blue">
+                    Save changes
+                </button>
+                <button type="button" class="btn default" data-dismiss="modal">
+                    Close
+                </button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<!-- /.modal -->
+<!-- END SAMPLE PORTLET CONFIGURATION MODAL FORM-->
+<!-- BEGIN PAGE HEADER-->
+<div class="row divRowForAll">
+    <div class="page-bar hashBar" id="hashtagbar" style="margin-bottom: 22px;">
+        @{
+            var sessionValue = Session[Global.__LoggedInProjectCode]?.ToString() ?? string.Empty;
+            if (((int)Session[Global.__DeviceType] == 1 || (int)Session[Global.__DeviceType] == 2) && ((!string.IsNullOrEmpty(sessionValue) && sessionValue != "Home") || (int)Session[Global.__LoggedInUserTypeKey] != 3))
+            {
+                <div class="HashTagDesign" style="visibility:visible;position:fixed;z-index:10;width:100%;background-color:#ebebeb">
+                    @Html.Action("HashTag", "Lookup", new { area = "CRM" })
+                </div>
+                <br class="lookupbr" />
+            }
+        }
+    </div>
+    <div class="page-bar">
+        @{
+            var sessionVal = Session[Global.__LoggedInProjectCode]?.ToString() ?? string.Empty;
+            if ((int)Session[Global.__DeviceType] == 1 && ((!string.IsNullOrEmpty(sessionVal) && sessionVal != "Home") || (int)Session[Global.__LoggedInUserTypeKey] != 3))
+            {
+                <div class="lookupDesign" style="visibility:visible;position:fixed;z-index:10;width:90%;background-color:#ebebeb">
+                    @Html.Action("LookUP", "Lookup", new { area = "CRM" })
+                </div>
+                    <br class="lookupbr" />
+            }
+
+        }
+
+        <!-- BEGIN PAGE TITLE & BREADCRUMB-->
+        @*<h3 class="page-title">
+                Dashboard <small>statistics and more</small>
+            </h3>*@
+        @*<ul class="page-breadcrumb">*@
+        <ul>
+            @*<li><i class="fa fa-home"></i><a href="index.html">Home</a></li>*@
+            @*<li> <i class="fa fa-angle-right"></i><a href="#">Dashboard</a> </li>*@
+            @*<li class="pull-right no-text-shadow">
+                    <div id="dashboard-report-range" class="dashboard-date-range tooltips" data-placement="top"
+                        data-original-title="Change date range">
+                        <i class="icon-calendar"></i><span></span><i class="fa fa-angle-down"></i>
+                    </div>
+                </li>*@
+        </ul>
+        <!-- END PAGE TITLE & BREADCRUMB-->
+    </div>
+
+</div>
+<!-- END PAGE HEADER-->
+<script>
+    $(document).ready(function () {
+        if ('@Session[Global.__LoggedInUserIs3PL]' == "T")
+            $('.divRowForAll').css('display', 'none');
+    });
+</script>
+<scrip>
+    //comment added
+</scrip>

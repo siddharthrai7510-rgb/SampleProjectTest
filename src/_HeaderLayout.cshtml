@@ -1,0 +1,1009 @@
+﻿@{
+    var idVal = new Random().Next(1, 999).ToString();
+    var UserType = (int)Session[Global.__LoggedInUserTypeKey];
+    var UserCode = (string)Session[Global.__LoggedInUserKey];
+    var Is3PLUser = string.Empty;
+    if ((int)Session[Global.__LoggedInUserTypeKey] == 3)
+    {
+        Is3PLUser = Session[Global.__LoggedInUserIs3PL].ToString();
+    }
+
+    var currentSessionVal = string.Empty;
+    var deviceType = (int)Session[Global.__DeviceType]; // Desktop => 1, tablet => 2, mobile => 3
+    var FreqScreenVisible = Session["frequentscreen"];
+    if ((int)Session[Global.__LoggedInUserTypeKey] == 2)
+    {
+        currentSessionVal = "sCustLogin";
+    }
+    else if ((int)Session[Global.__LoggedInUserTypeKey] == 1)
+    {
+        currentSessionVal = "sSuppLogin";
+    }
+    else
+    {
+        currentSessionVal = Session[Global.__LoggedInProjectCode]?.ToString() ?? string.Empty;
+    }
+    char License; char LicenseAttach; char LicenseDash; char LicenseAnaly; string sLicense = "0"; string sLicenseAttach = "0"; string sLicenseDash = "0"; string sLicenseAnaly = "0";
+    string sOptions = Session["ModuleLicense"].ToString();
+    LicenseAnaly = sOptions[15]; LicenseDash = sOptions[21]; LicenseAttach = sOptions[23]; License = sOptions[24];
+    sLicenseAnaly = LicenseAnaly.ToString(); sLicenseDash = LicenseDash.ToString(); sLicenseAttach = LicenseAttach.ToString(); sLicense = License.ToString();
+
+
+}
+<style>
+    #searchTag:hover {
+        background-color: #98A0AA;
+    }
+
+    #taskDetailsnote {
+        border: none;
+        background-color: transparent;
+        resize: none;
+        outline: none;
+    }
+
+        #taskDetailsnote:focus {
+            box-shadow: none !important;
+        }
+
+    @@media (min-width: 1367px) {
+        #companyCode {
+            display: none;
+        }
+
+        #companyname {
+            display: block;
+        }
+
+        #header_inbox_bar {
+            margin-right: -25px;
+            margin-top: -5px;
+        }
+
+        #searchTag {
+            margin-top: -7px !important;
+            padding-top: 17px !important;
+        }
+    }
+
+    .headerHover > li > a:hover {
+        background-color: #3A3F51 !important;
+    }
+
+    @@media (min-width: 1024px) and (max-width: 1366px) {
+        #companyCode {
+            display: none;
+        }
+
+        #companyname {
+            display: block;
+        }
+
+        #header_inbox_bar {
+            margin-right: -25px;
+            margin-top: -5px;
+        }
+
+        #searchTag {
+            margin-top: -7px !important;
+            padding-top: 17px !important;
+        }
+    }
+
+    @@media (min-width: 701px) and (max-width: 1023px) {
+        #companyCode {
+            margin-top: 15px !important;
+            margin-left: 70px !important;
+            width: 200px !important;
+            display: block;
+        }
+
+        #companyname {
+            display: none;
+        }
+    }
+
+    @@media (max-width: 700px) {
+        #companyCode {
+            display: block;
+        }
+
+        #companyname {
+            display: none;
+        }
+
+        #menuToggle {
+            display: none;
+        }
+    }
+
+    @@media (max-width: 992px) {
+        #menuToggle {
+            display: none;
+        }
+
+        #name {
+            display: none;
+        }
+
+        #searchBtn {
+            margin-top: 5px !important;
+        }
+
+        #header_inbox_bar {
+            margin-right: -10px !important;
+            margin-top: -2px !important;
+        }
+
+        #searchTag {
+            margin-top: -2px !important;
+        }
+    }
+
+    @@media (max-width: 400px) {
+        #companyCode {
+            display: block;
+        }
+
+        #companyname {
+            display: none;
+        }
+
+        #top-nave {
+            height: 48px;
+        }
+    }
+
+    #imgName {
+        width: 29px;
+        height: 32px;
+        border-radius: 50%;
+        background: #58BFCCE6;
+        font-size: 14px;
+        color: #fff;
+        text-align: center;
+        line-height: 33px;
+    }
+</style>
+<style>
+    @@media screen and (min-width:1024px) and (max-width: 1524px) {
+        .modalWidthquick {
+            width: 50%;
+        }
+    }
+
+    @@media screen and (min-width: 1024px) and (max-width: 1150px) {
+        .modalWidthquick {
+            width: 50%;
+        }
+    }
+
+    @@media screen and (min-width: 980px) and (max-width: 1024px) {
+        .modalWidthquick {
+            width: 50%;
+        }
+    }
+
+    @@media screen and (min-width: 900px) and (max-width: 980px) {
+        .modalWidthquick {
+            width: 50%;
+        }
+    }
+
+    @@media screen and (min-width: 800px) and (max-width: 900px) {
+        .modalWidthquick {
+            width: 50%;
+        }
+    }
+
+    @@media screen and (min-width: 768px) {
+        .modalWidthquick {
+            width: 50%;
+        }
+    }
+</style>
+
+<link href="~/Content/custom/quickmenu-style.css" rel="stylesheet" />
+<link href="~/Content/assets/css/devextreme/dx.light.css" rel="stylesheet" />
+<!-- BEGIN HEADER -->
+<div class="modal fade" id="taskNote" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+            </div>
+            <div class="modal-body">
+                <textarea style="font-weight: normal;width: 100%; border: 1px solid #ccc;" id="taskDetailsnote" rows="5" readonly></textarea>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="top-nave" class="page-header navbar navbar-fixed-top">
+    <!-- BEGIN TOP NAVIGATION BAR -->
+    <div class="page-header-inner">
+        <!-- BEGIN LOGO -->
+        <!-- BEGIN LOGO -->
+        <div class="page-logo">
+            @if ((string)Session["companylogoortexttopleft"] == "" || Session["companylogoortexttopleft"] == null)
+            {
+                <div id="Logo" style="padding-left: 0px; margin-left: -25px; margin-right: -71px" class="">
+                    <a class="navbar-brand" style="width:207px;text-align:left;" href="" id="leftManu">
+                        <span style="color: #E5E4E2">
+                            Green<span style="color: #6DCF1D">e</span>Step
+                        </span>
+                    </a>
+                    <a style="padding-left: 0px;margin-left:-13px" href="#" class="" id="menuToggle">
+                        <img src="~/Content/assets/admin/layout/img/sidebar_inline_toggler_icon_light.jpg" style="width:46px;height:46px">
+                    </a>
+                </div>
+
+
+            }
+            else
+            {
+                <div id="Logo" style="padding-left: 0px; margin-left: -35px; margin-right: -71px;" class="">
+                    @if (Session["companylogoortexttopleft"].ToString().Contains("base64"))
+                    {
+                        <a class="navbar-brand" style="width:204px;text-align:left;padding: 1px 15px" href="" id="leftManu">
+                            @Html.Raw(Server.HtmlDecode((string)Session["companylogoortexttopleft"]))
+                        </a>
+                    }
+                    else
+                    {
+                        <a class="navbar-brand" style="width:204px;text-align:center;padding: 12px 15px" href="" id="leftManu">
+                            @Html.Raw(Server.HtmlDecode((string)Session["companylogoortexttopleft"]))
+                        </a>
+                    }
+                    <a style="padding-left: 0px" href="#" class="" id="menuToggle">
+                        <img src="~/Content/assets/admin/layout/img/sidebar_inline_toggler_icon_light.jpg" style="width:46px;height:46px">
+                    </a>
+                </div>
+            }
+        </div>
+        <!-- END LOGO -->
+        <!-- END LOGO -->
+        <!-- BEGIN RESPONSIVE MENU TOGGLER -->
+        <a href="javascript:;" class="menu-toggler responsive-toggler" data-toggle="collapse"
+           data-target=".navbar-collapse">
+        </a>
+        <!-- END RESPONSIVE MENU TOGGLER -->
+        <div class="top-menu" style="margin-top:2px!important;margin-bottom:2px!important;padding:0px 0px 0px 0px;">
+            <ul class="nav navbar-nav headerHover pull-right">
+                @if (((int)Session[Global.__LoggedInUserTypeKey] == 3) && (Session[Global.__LoggedInUserIs3PL].ToString() == "F") && (int)Session[Global.__DeviceType] == 1)
+                {
+                    <li class="clsDash">
+                        @{
+                            var sessionDash = Session[Global.__LoggedInProjectCode]?.ToString() ?? string.Empty;
+                            if (sLicenseDash != "0")
+                            {
+                                if (sessionDash != "Home")
+                                {
+                                    <a id="sDADRedirecthref" style="padding:10px 10px 7px 7px !important;height: 40px;">
+                                        <i id="sDash" class="fa icon-bar-chart" title="Company Dashboards" style="color:ghostwhite;font-size:18px;padding-top: 2px"></i>
+                                    </a>
+                                }
+                            }
+                        }
+                    </li>
+                            }
+                @if (((int)Session[Global.__LoggedInUserTypeKey] == 3) && (Session[Global.__LoggedInUserIs3PL].ToString() == "F") && (int)Session[Global.__DeviceType] == 1)
+                {
+                    <li class="clsAnaly">
+                        @{
+                            var sessionAnaly = Session[Global.__LoggedInProjectCode]?.ToString() ?? string.Empty;
+                            if (sLicenseAnaly != "0")
+                            {
+                                if (sessionAnaly != "Home")
+                                {
+                                    <a id="sAnalyticsRedirecthref" style="padding:10px 10px 7px 7px !important;height: 40px;">
+                                        <i id="sAnalytics" class="fa fa-line-chart" title="Analytics" style="color:ghostwhite;font-size:18px;padding-top: 2px"></i>
+                                    </a>
+                                }
+                            }
+                        }
+                    </li>
+                            }
+               @if (((int)Session[Global.__LoggedInUserTypeKey] == 3) && (Session[Global.__LoggedInUserIs3PL].ToString() == "F") && (int)Session[Global.__DeviceType] == 1)
+               {
+                    <li class="clsAttach">
+                        @{
+                            var sessionAttach = Session[Global.__LoggedInProjectCode]?.ToString() ?? string.Empty;
+                            if (sLicenseAttach != "0")
+                            {
+                                if (sessionAttach != "Home")
+                                {
+                                    <a id="sAttachmentsRedirecthref" style="padding:10px 10px 7px 7px !important;height: 40px;">
+                                        <i id="sAttachments" class="fa fa-paperclip" title="Attachments" style="color:ghostwhite;font-size:18px;padding-top: 2px"></i>
+                                    </a>
+                                }
+                            }
+                        }
+                    </li>
+                            }
+                @if ((int)Session[Global.__LoggedInUserTypeKey] == 3 && (int)Session[Global.__DeviceType] == 1)
+                {
+                    <li class="clsKb">
+                        @{
+                            var session = Session[Global.__LoggedInProjectCode]?.ToString() ?? string.Empty;
+                            if (sLicense != "0")
+                            {
+                                if (session != "Home")
+                                {
+                                    <a id="sKbRedirecthref" style="padding:10px 10px 7px 7px !important;height: 40px;">
+                                        <i id="sKbRedirect" class="fa fa-book" title="KB Article" style="color:ghostwhite;font-size:18px;padding-top: 2px"></i>
+                                    </a>
+                                }
+                            }
+                        }
+                    </li>
+                            }
+                @if ((int)Session[Global.__LoggedInUserTypeKey] == 3 && (int)Session[Global.__DeviceType] == 1)
+                {
+                    <li class="clsKbGia">
+                        @{
+                            var sessionGia = Session[Global.__LoggedInProjectCode]?.ToString() ?? string.Empty;
+                            if (sLicense != "0")
+                            {
+                                if (sessionGia != "Home")
+                                {
+                                    <a id="sGiaRedirecthref" style="padding:10px 10px 7px 7px !important;height: 40px;">
+                                        <i id="sGiaRedirect" class="fa fa-magic" title="Gen AI" style="color:ghostwhite;font-size:18px;padding-top: 2px"></i>
+                                    </a>
+                                }
+                            }
+                        }
+                    </li>
+                            }
+                @if ((int)Session[Global.__LoggedInUserTypeKey] == 3)
+                {
+                    <li class="clsCilp">
+                        @{
+                            var sessionclip = Session[Global.__LoggedInProjectCode]?.ToString() ?? string.Empty;
+                            if (sessionclip != "Home")
+                            {
+                                <a id="sClipbrd" style="padding:10px 10px 7px 7px !important;height: 40px;">
+                                    <i class="dx-icon dx-icon-copy" id="clipBrd" title="Clipboard" style="color:ghostwhite;font:22px / 1 DXIcons;"></i>
+                                </a>
+                            }
+                        }
+                    </li>
+                            }
+                <li class="clsSearchTag">
+                    @{
+                        var sessionVal = Session[Global.__LoggedInProjectCode]?.ToString() ?? string.Empty;
+                        if (!string.IsNullOrEmpty(sessionVal) && sessionVal != "Home" && (int)Session[Global.__DeviceType] != 1)
+                        {
+                            <a href="javascript:registerComposeButtonEvent('Lookup_@idVal', 'Lookup','@Url.Content("~/CRM/Lookup/LookUP?menuKey=CRM_SECLOOKUPæLookup")', 'T')" id="searchTag" title="Search" style=""><i class="dx-icon dx-icon-search" style="color: ghostwhite;font-size:20px!important" id="searchBtn"> </i></a>
+                        }
+                        else if ((int)Session[Global.__LoggedInUserTypeKey] != 3 && (int)Session[Global.__DeviceType] != 1)
+                        {
+                            <a href="javascript:registerComposeButtonEvent('Lookup_@idVal', 'Lookup','@Url.Content("~/CRM/Lookup/LookUP?menuKey=CRM_SECLOOKUPæLookup")', 'T')" id="searchTag" title="Search" style=""><i class="dx-icon dx-icon-search" style="color: ghostwhite;font-size:20px!important" id="searchBtn"> </i></a>
+                        }
+                    }
+                </li>
+                @if ((int)Session[Global.__DeviceType] == 1)
+                {
+                    <li class="clsNotification">
+                        @if ((int)Session[Global.__LoggedInUserTypeKey] == 3)
+                        {
+                            var sessionVal1 = Session[Global.__LoggedInProjectCode]?.ToString() ?? string.Empty;
+                            if (!string.IsNullOrEmpty(sessionVal1) && sessionVal1 != "Home")
+                            {
+                                @RenderPage("~/Views/Shared/_Notification.cshtml")
+                            }
+                        }
+                    </li>
+                }
+                @{
+
+                    if ((int)Session[Global.__LoggedInUserTypeKey] == 3 || (int)Session[Global.__LoggedInUserTypeKey] == 2 || (int)Session[Global.__LoggedInUserTypeKey] == 1)
+                    {
+                        if (!string.IsNullOrEmpty(currentSessionVal) && currentSessionVal != "Home")
+                        {
+                            <li class="dropdown dropdown-quick-sidebar-toggler">
+                                <a href="javascript:;" style="padding:10px 10px 7px 7px !important;">
+                                    <i class="dx-icon dx-icon-bookmark" title="Frequently Used Menu" style="color:ghostwhite;font-size:22px!important;"></i>
+                                </a>
+                            </li>
+                        }
+                    }
+                }
+                <li class="clsHome">
+                    @{
+                        var sessionVall = Session[Global.__LoggedInProjectCode]?.ToString() ?? string.Empty;
+                        if (!string.IsNullOrEmpty(sessionVall) && sessionVall != "Home")
+                        {
+                            <a id="sHomeRedirecthref" style="padding:10px 10px 7px 7px !important;height: 40px;">
+                                <i id="sHomeRedirect" class="dx-icon icon dx-icon-home" title="Home" style="color: ghostwhite;font-size:22px!important;"></i>
+                            </a>
+                        }
+                    }
+                </li>
+                @{
+                    var gsGlobalAppSettingg = (System.Collections.Specialized.NameValueCollection)System.Configuration.ConfigurationManager.GetSection("appSettings");
+                    string imgPathh = gsGlobalAppSettingg["MediaPath"] + "/Images/";
+                    <!-- BEGIN USER LOGIN DROPDOWN -->
+                    <li class="dropdown dropdown-user">
+                        @{
+                            if ((string)Session[Global.__LoggedInUserImageKey] == null || (string)Session[Global.__LoggedInUserImageKey] == "")
+                            {
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-close-others="true" style="padding:0px 0px 0px 0px;">
+                                    <div id="imgName" class="btn-group img-circle" style="margin-bottom: 5px!important; margin-top: 5px!important"></div>
+                                    <span id="name" class="username">@Session["UserName"]</span>
+                                    <i class="fa fa-angle-down"> </i>
+                                </a>
+                            }
+                            else
+                            {
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown"
+                                   data-hover="dropdown" data-close-others="true">
+                                    <img class="img-circle" style="width:29px;height:29px;background-color:white;" src="@imgPathh@Session["UserImage"]">
+                                    <span id="name" class="username">@Session["UserName"]</span>
+                                    <i class="fa fa-angle-down"> </i>
+                                </a>
+                            }
+                        }
+                        <ul id="dropdown" class="dropdown-menu">
+                            <li><a href="javascript:;" id="trigger_fullscreen"><i class="dx-icon dx-icon-fullscreen"></i>Full Screen</a></li>
+                            @if (((int)Session[Global.__LoggedInUserTypeKey] == 3) && (Session[Global.__LoggedInUserIs3PL].ToString() == "F")) {
+                            <li class="divider"></li>
+                            }
+                            <li>
+                                @if ((int)Session[Global.__LoggedInUserTypeKey] == 3 && (Session[Global.__LoggedInUserIs3PL].ToString() == "F"))
+                                {
+                                    @RenderPage("~/Views/User/ClockInOut.cshtml")
+                                    if ((currentSessionVal == "Home" || currentSessionVal == "") && (Session[Global.__LoggedInUserIs3PL].ToString() == "F"))
+                                    {
+                                    <li id="sDividerGh" class="divider"></li>
+                                    }
+                                }
+                        </li>
+                        @if (((int)Session[Global.__LoggedInUserTypeKey] == 3))
+                        {
+                            <li id="sDividerGh" class="divider"></li>
+                        }
+                        <li class="clsKb" id="sKbRedirectDropProf">
+                            @{
+                                var sessionKb = Session[Global.__LoggedInProjectCode]?.ToString() ?? string.Empty;
+                                if (sLicense != "0")
+                                {
+                                    if (sessionKb != "Home")
+                                    {
+                                        <a id="sKbRedirecthrefDrop" style="padding-top: 10px;height: 40px;">
+                                            <i id="sKbRedirectDrop" class="dx-icon icon dx-icon-search"></i>GIA GPT
+                                        </a>
+                                    }
+                                }
+                            }
+                        </li>
+                        @if (((int)Session[Global.__LoggedInUserTypeKey] != 3))
+                        {
+                            <li id="sDividerGh" class="divider"></li>
+                        }
+                        @if (((int)Session[Global.__LoggedInUserTypeKey] == 3) && (Session[Global.__LoggedInUserIs3PL].ToString() == "F"))
+                        {
+                            <li id="sDividerGh" class="divider"></li>
+                        }
+                        <li class="clsHome" id="sHomeRedirectDropProf">
+                            @{
+                                var sessionVallDrop = Session[Global.__LoggedInProjectCode]?.ToString() ?? string.Empty;
+                                if (!string.IsNullOrEmpty(sessionVallDrop) && sessionVallDrop != "Home")
+                                {
+                                    <a id="sHomeRedirecthrefDrop" style="padding-top: 10px;height: 40px;">
+                                        <i id="sHomeRedirectDrop" class="dx-icon icon dx-icon-home"></i>Go to Home Menu
+                                    </a>
+                                }
+                            }
+                        </li>
+                        @if (((int)Session[Global.__LoggedInUserTypeKey] == 3) && (Session[Global.__LoggedInUserIs3PL].ToString() == "F"))
+                        {
+                            <li id="sDividerFr" class="divider"></li>
+                        }
+                        <li class="dropdown dropdown-quick-sidebar-toggler">
+                            @{
+                                if ((((int)Session[Global.__LoggedInUserTypeKey] == 3) && (Session[Global.__LoggedInUserIs3PL].ToString() == "F")) || (int)Session[Global.__LoggedInUserTypeKey] == 2 || (int)Session[Global.__LoggedInUserTypeKey] == 1)
+                                {
+                                    if (!string.IsNullOrEmpty(currentSessionVal) && currentSessionVal != "Home")
+                                    {
+                                        <a href="javascript:;">
+                                            <i class="dx-icon dx-icon-bookmark"></i>Frequently Used Menu
+                                        </a>
+                                    }
+                                    if ((int)Session[Global.__LoggedInUserTypeKey] == 2 || (int)Session[Global.__LoggedInUserTypeKey] == 1)
+                                    {
+                                    <li id="sDivider" class="divider"></li>
+                                    }
+                                }
+                            }
+                            </li>
+                            @{
+                                if (!string.IsNullOrEmpty(currentSessionVal) && currentSessionVal != "Home")
+                                {
+                                    if (((int)Session[Global.__LoggedInUserTypeKey] == 3) && (Session[Global.__LoggedInUserIs3PL].ToString() == "F"))
+                                    {
+                                        <li id="sDivider" class="divider"></li>
+                                    }
+
+                                    <li><a id="Link"><i class="dx-icon icon dx-icon-pin"></i>Set as Home Page</a></li>
+
+                                    if ((int)Session[Global.__LoggedInUserTypeKey] == 2 || (int)Session[Global.__LoggedInUserTypeKey] == 1)
+                                    {
+                                        <li id="sDivider" class="divider"></li>
+                                    }
+                                }
+
+                                else if (((int)Session[Global.__LoggedInUserTypeKey] == 3) && (Session[Global.__LoggedInUserIs3PL].ToString() == "T") && ((int)Session[Global.__LoggedInUserTypeKey] == 2) && ((int)Session[Global.__LoggedInUserTypeKey] == 1))
+                                {
+                                    <li id="sDivider" class="divider"></li>
+                                    <li><a id="Link"><i class="dx-icon icon dx-icon-pin"></i>Set as Home Page</a></li>
+                                }
+                            }
+                            @if ((int)Session[Global.__LoggedInUserTypeKey] == 3)
+                            {
+                                var sessionVal1 = Session[Global.__LoggedInProjectCode]?.ToString() ?? string.Empty;
+                                if (!string.IsNullOrEmpty(sessionVal1) && sessionVal1 != "Home")
+                                {
+                                    <li id="sDivider" class="divider"></li>
+                                    <li id="sResetPassword"><a href="~/User/Index"><i class="dx-icon dx-icon-rename"></i>Reset Password</a></li>
+                                }
+                                <li id="sDividerr" class="divider"></li>
+                            }
+
+                            <li><a href="~/Login/SignOut"><i class="dx-icon dx-icon-clear"></i>Log Out</a></li>
+                        </ul>
+                        </li>
+                <!-- END USER LOGIN DROPDOWN -->
+                }
+                @{
+                    if (!string.IsNullOrEmpty(currentSessionVal) && currentSessionVal != "Home")
+                    {
+                        <li><a href="~/Login/SignOut" style="padding:10px 5px 7px 7px !important;"><i class="dx-icon dx-icon-clear" title="Log Out" style="color:ghostwhite;font-size: 22px !important;"></i></a></li>
+                    }
+                }
+                </ul>
+            </div>
+            <!-- END TOP NAVIGATION MENU -->
+            <!-- BEGIN TOP NAVIGATION MENU -->
+            <!-- END TOP NAVIGATION MENU -->
+            <!-- BEGIN QUICK SIDEBAR -->
+            <div class="page-quick-sidebar-wrapper" data-close-on-body-click="false" style="background:#eee;">
+                <div class="page-quick-sidebar">
+                    <div class="tab-content">
+                        <div class="wrapper">
+                            <!-- Sidebar  -->
+                            <nav id="sidebar" style="overflow-x:hidden;position:absolute;top:0px;bottom:0px;">
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- END QUICK SIDEBAR -->
+        </div>
+        @{
+            var compLic = "";
+            if ((int)Session[Global.__LoggedInUserTypeKey] == 3 && (Session[Global.__LoggedInUserIs3PL].ToString() == "F")
+                && ((string)Session[Global.__ViewAndEditLicenseInfo] == "T"))
+            {
+                string dateString = Session["LicenseValidUpto"].ToString();
+                DateTime date = DateTime.ParseExact(dateString, "yyyyMMdd", null);
+                string licValidUpToDate = date.ToString("yyyy-MM-dd");
+
+                DateTime currentDate = DateTime.Now;
+                string TodaysDate = currentDate.ToString("yyyy-MM-dd");
+
+                DateTime sdate = DateTime.Parse(TodaysDate);
+                string TodayformattedDate = $"{sdate.Year}, {sdate.Month}, {sdate.Day}";
+
+                //string dateString = "2024-10-05";
+                DateTime sDate = DateTime.Parse(licValidUpToDate);
+                string LicformattedDate = $"{sDate.Year}, {sDate.Month}, {sDate.Day}";
+
+                DateTime TodaysD = DateTime.Parse(TodayformattedDate);
+                DateTime licValidUpTo = DateTime.Parse(LicformattedDate);
+
+                TimeSpan difference = licValidUpTo - TodaysD;
+
+                if (difference.TotalDays <= 45)
+                {
+                    if (difference.TotalDays == 0)
+                    {
+                        compLic = "License expires today";
+                    }
+                    else if (difference.TotalDays == 1)
+                    {
+                        compLic = "License will expire tomorrow";
+                    }
+                    else
+                    {
+                        compLic = "License will expire in " + @difference.TotalDays + " days";
+                    }
+                }
+            }
+
+
+            var compName = "";
+            if ((int)Session[Global.__LoggedInUserTypeKey] == 3)
+            {
+                compName = (string)Session[Global.__LoggedInComapanyName] + ", " + (string)Session[Global.__LoggedInRegionCode];
+            }
+            else
+            {
+                compName = (string)Session[Global.__LoggedInAccountName];
+            }
+            <div style="padding-top:1em;color:white;font-family:Arial;font-size:14px" id="companyname">
+                &nbsp; &nbsp;@compName
+
+
+                &nbsp;&nbsp; <span style="color:yellow!important;font-family:Arial;font-size:13px;float:right;">@compLic</span>
+
+            </div>
+        }
+        @{
+            var compCode = "";
+            if ((int)Session[Global.__LoggedInUserTypeKey] == 3)
+            {
+                compCode = (string)Session[Global.__LoggedInComapanyCode] + ", " + (string)Session[Global.__LoggedInRegionCode];
+            }
+            else
+            {
+                compCode = (string)Session[Global.__LoggedInAccountName];
+            }
+            <div style="margin-left:-5px;margin-top:60px;color:white!important;font-family:Arial;font-size:14px;" id="companyCode">
+                @compCode
+            </div>
+        }
+        @{
+
+
+        }
+    </div>
+    <!-- END HEADER -->
+    @*@@@@@@@ quick link code strats from here @@@@@@@@@@*@
+    <div class="modal fade" id="QuickLink" tabindex="-1" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog modalWidthquick" id="dia" style="height:100px;">
+            <div class="modal-content" id="cont">
+                <div class="modal-header" id="header">
+                    <label style="color:#555555">Quick Links</label>
+                    <button type="button" style="float:right;font-size:smaller" class="btn btn-outline sbold red modalCloseBtn" data-dismiss="modal"><i class="fa fa-times" aria-hidden="true"></i></button>
+                </div>
+                <div class="modal-body" style="height:600px;width:auto;">
+                    <div class="col-md-12">
+                        <nav class="quickmenu" id="sidebarQuickScreen">
+                        </nav>
+                    </div>
+                </div>
+                <div class="modal-header" id="header">
+                    <input type="checkbox" name="quicklinkpopupcheck" id="quicklinkpopupcheck" />
+                    <label style="color:#555555">Do not popup while login</label>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+    <script>
+        $(document).ready(function () {
+            var isLoginfreq = sessionStorage.getItem("LoginFrequentScreen");
+            var pathname = window.location.pathname;
+            if (pathname == "/Home/Index") {
+                $("#Link").css("display", "none");
+                $("#sDivider").css("display", "none");
+                $("#sDividerr").css("display", "none");
+                $("#sDividerFr").css("display", "none");
+                $("#sDividerGh").css("display", "none");
+                $("#sResetPassword").css("display", "none");
+            }
+
+            var username = '@HttpContext.Current.Session[Global.__LoggedInUserNameKey]';
+            var temp = username.split(' ');
+            var initials = temp[0].charAt(0);
+            if (typeof temp[1] !== 'undefined') {
+                initials = temp[0].charAt(0) + "" + temp[1].charAt(0);
+            }
+            //document.getElementById("imgName").innerHTML = initials;
+            $('#imgName').text(initials);
+            $('#Link').on("click", function () {
+                var activeUrl = $('.page-sidebar-menu').find('li.active > a.ajaxify').attr('href');
+                var pageURL = (activeUrl == undefined) ? $(location).attr("pathname") + $(location).attr("search") : activeUrl; //$(location).attr("pathname");
+                var url = "../../Common/SetHomePage?url=" + encodeURIComponent(pageURL) + "&type=2";
+
+                $.ajax({
+                    type: "POST",
+                    url: url,
+                    success: function (data) {
+                        toastr['info']("", "Current page is set as default Home page.")
+                    },
+                    error: function (xhr, ajaxOptions, thrownError) {
+                        alert("error:" + thrownError);
+                    }
+
+                });
+            });
+
+            // Load Frequently used activity list
+            var currSesVal = '@HttpContext.Current.Session[Global.__LoggedInProjectCode]';
+            if ((currSesVal != "" && currSesVal != "Home") || ('@UserType' == "2" || '@UserType' == "1")) {
+                $.ajax({
+                    type: "POST",
+                    url: "../../Home/LoadFreqUsedScreen",
+                    data: { 'sQuicklink': "F" },
+                    dataType: "html",
+                    success: function (data) {
+                        document.getElementById("sidebar").innerHTML = data;
+                        QuickLinkCheck();
+                    },
+                    error: function (xhr, ajaxOptions, thrownError) {
+                        alert("error:" + thrownError);
+                    }
+                });
+            }
+
+            $('.page-quick-sidebar').on('click', ' li > a.ajaxify', function (e) {
+                e.preventDefault();
+                var pageContentBody = $('.page-content .page-content-body');
+                var url = $(this).attr("href");
+                $.ajax({
+                    type: "GET",
+                    cache: false,
+                    url: url,
+                    dataType: "html",
+                    success: function (res) {
+                        pageContentBody.html(res);
+                    },
+                    error: function (xhr, ajaxOptions, thrownError) {
+                        Metronic.stopPageLoading();
+                        pageContentBody.html('<h4>Could not load the requested content.</h4>');
+                    }
+                });
+            });
+
+            // Load Frequently used activity list
+            if (isLoginfreq == "T" && ('@UserType' == "3" || '@UserType' == "2" || '@UserType' == "1")) {
+                if ((currSesVal != "" && currSesVal != "Home") || ('@UserType' == "2" || '@UserType' == "1")) {
+                    $.ajax({
+                        type: "POST",
+                        url: "../../Home/LoadFreqUsedScreen",
+                        data: { 'sQuicklink': "T" },
+                        dataType: "html",
+                        success: function (data) {
+                            document.getElementById("sidebarQuickScreen").innerHTML = data;
+                        },
+                        error: function (xhr, ajaxOptions, thrownError) {
+                            alert("error:" + thrownError);
+                        }
+                    });
+                }
+            }
+            else {
+                $("#QuickLink").modal('hide');
+            }
+        });
+
+        $("#menuToggle").on("click", function () {
+            $('.page-sidebar .sidebar-toggler').click();
+        });
+
+        $("#sHomeRedirect").on("click", function () {
+            $("#sHomeRedirecthref").attr("href", "/../Home/Index?isClick=true");
+        });
+        $("#sAttachments").on("click", function (e) {
+            e.preventDefault();
+            $.ajax({
+                url: "/Common/SetCurrentModule",
+                type: "POST",
+                data: { module: "Attachments" },
+                success: function () {
+                    window.location.href = "/CRM/Attachment/Attachment?type=Task";
+                }
+            });
+        });
+        $("#sAnalytics").on("click", function (e) {
+            e.preventDefault();
+            $.ajax({
+                url: "/Common/SetCurrentModule",
+                type: "POST",
+                data: { module: "Analytics" },
+                success: function () {
+                    window.location.href = "/Common/GetBlankPage";
+                }
+            });
+        });
+        $("#sDash").on("click", function (e) {
+            e.preventDefault();
+            $.ajax({
+                url: "/Common/SetCurrentModule",
+                type: "POST",
+                data: { module: "DAD" },
+                success: function () {
+                    window.location.href = "/CRM/Dashboard/TopBest?menuKey=DAD_TOPBEST%C3%A6TOPBEST [Dashboard]";
+                }
+            });
+        });
+        $("#sKbRedirect").on("click", function (e) {
+            e.preventDefault();
+            $.ajax({
+                url: "/Common/SetCurrentModule",
+                type: "POST",
+                data: { module: "KnowledgeBase" },
+                success: function () {
+                    window.location.href = "/CRM/KnowledgeBase/KbArticlMasterSearch?sKbcode=''";
+                }
+            });
+        });
+        $("#sGiaRedirect").on("click", function (e) {
+            e.preventDefault();
+            $.ajax({
+                url: "/Common/SetCurrentModule",
+                type: "POST",
+                data: { module: "Giagenerativeai" },
+                success: function () {
+                    window.location.href = "/CRM/AiAssistance/GenAimodule?menuKey=''";
+                }
+            });
+        });
+
+        $("#sHomeRedirectDropProf").on("click", function () {
+            $("#sHomeRedirecthrefDrop").attr("href", "/../Home/Index?isClick=true");
+        });
+
+        $("#sKbRedirectDropProf").on("click", function () {
+            $("#sKbRedirecthrefDrop").attr("href", "/CRM/AiAssistance/GenAimodule?menuKey=''");
+        });
+
+        $("#Logo").on("click", function () {
+            if (('@UserType' == 3) && ('@Is3PLUser' != "T"))
+                $("#leftManu").attr("href", "/../Home/Index?isClick=true");
+        });
+    </script>
+
+    <script>
+        function toggleFullScreen() {
+            if (!document.fullscreenElement &&    // alternative standard method
+                  !document.mozFullScreenElement && !document.webkitFullscreenElement && !document.msFullscreenElement) {  // current working methods
+                if (document.documentElement.requestFullscreen) {
+                    document.documentElement.requestFullscreen();
+                } else if (document.documentElement.mozRequestFullScreen) {
+                    document.documentElement.mozRequestFullScreen();
+                } else if (document.documentElement.webkitRequestFullscreen) {
+                    document.documentElement.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
+                } else if (document.documentElement.msRequestFullscreen) {
+                    document.documentElement.msRequestFullscreen();
+                }
+            } else {
+                if (document.cancelFullScreen) {
+                    document.cancelFullScreen();
+                } else if (document.mozCancelFullScreen) {
+                    document.mozCancelFullScreen();
+                } else if (document.webkitCancelFullScreen) {
+                    document.webkitCancelFullScreen();
+                } else if (document.msExitFullscreen) {
+                    document.msExitFullscreen();
+                }
+            }
+        }
+        $('#trigger_fullscreen').click(function () {
+            toggleFullScreen();
+        });
+    </script>
+    <script>
+        //When the user click on close button or cross(X) icon
+        $('#close_modal, .close_for_sec').on("click", function () {
+            $('#modal_ListForAllTable').css("display", "none");
+            if ($('#modal_ListForAllTable').find('button').attr('data-covert') == "true") {
+                $('#modal_ListForAllTable').find('button').attr('data-covert', 'false');
+            }
+        });
+
+        //When the user click anywhere outside of the modal, close it
+        window.onclick = function (event) {
+            var modal = document.getElementById("modal_ListForAllTable");
+            if (event.target == modal)
+                modal.style.display = "none";
+        }
+
+        //When the user press 'Esc' key
+        $(document).keyup(function (e) {
+            if (e.keyCode == 27) {
+                $('#modal_ListForAllTable').css("display", "none");
+            }
+        });
+
+        $('#close_lockmodal, .close_for_lock').on("click", function () {
+            $('#modal_LockTransactionInfo').css("display", "none");
+        });
+    </script>
+    <script>
+
+        var QuickLinkCheck = function () {
+            var sCheckedFreq = readCookieFreq('checkedfreq');
+            if (sCheckedFreq == "true") {
+                var isLoginfrequent = sessionStorage.getItem("LoginFrequentScreen");
+                $('#chkpopuplogin').prop('checked', true).uniform();;
+                if (isLoginfrequent == "T" && '@deviceType' == "1") {
+                    $("#QuickLink").modal('show');
+                    sessionStorage.setItem("LoginFrequentScreen", '');
+                }
+            }
+            else {
+                $("#QuickLink").modal('hide');
+            }
+        }
+        var readCookieFreq = function (name) {
+            var nameEQ = name + "=";
+            var ca = document.cookie.split(';');
+            for (var i = 0; i < ca.length; i++) {
+                var c = ca[i];
+                while (c.charAt(0) == ' ') c = c.substring(1, c.length);
+                if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
+            }
+            return null;
+        }
+
+        var createCookieFreq = function (name, value, days) {
+            if (days) {
+                var date = new Date();
+                date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+                var expires = "; expires=" + date.toGMTString();
+            }
+            else var expires = "";
+            document.cookie = name + "=" + value + expires + "; path=/";
+        }
+
+        var eraseCookieFreq = function (name) {
+            createCookieFreq(name, "", -1);
+        }
+
+    </script>
+    <script>
+        function toggleCheckbox(element) {
+            var sCheckedFrq = document.getElementById('chkpopuplogin').checked;
+            if (sCheckedFrq) {
+                var sDays = 365;
+                createCookieFreq("checkedfreq", sCheckedFrq, sDays);
+                $('#chkpopuplogin').prop('checked', true).uniform();;
+            }
+            else {
+                eraseCookieFreq("checkedfreq");
+                $('#chkpopuplogin').prop('checked', false).uniform();;
+            }
+        }
+    </script>
+    <script>
+        $("#quicklinkpopupcheck").on("click", function () {
+            var sCheckedFq = document.getElementById('quicklinkpopupcheck').checked;
+            if (sCheckedFq) {
+                $('#chkpopuplogin').prop('checked', false).uniform();;
+                eraseCookieFreq("checkedfreq");
+            }
+            else {
+                $('#chkpopuplogin').prop('checked', true).uniform();;
+                createCookieFreq("checkedfreq", sCheckedFrq, sDays);
+            }
+        });
+    </script>
+    <script>
+        function getCookie(name) {
+            let match = document.cookie.match(new RegExp("(^| )" + name + "=([^;]+)"));
+            return match ? decodeURIComponent(match[2]) : "";
+        }
+
+
+        $(document).ready(function () {
+            var user = '@UserCode';
+            let currentUser = getCookie("UserLoggedin");
+            if (currentUser === user) {
+                let savedText = getCookie(`taskNote_${currentUser}`);
+                $("#taskDetailsnote").val(savedText || "");
+            } else {
+                $("#taskDetailsnote").val("");
+            }
+            $("#clipBrd").on("click", function () {
+                $('#taskNote').modal();
+            });
+        });
+    </script>
+    <script>
+        //hello i am making file changes 
+        //testing  
+
+    </script>
